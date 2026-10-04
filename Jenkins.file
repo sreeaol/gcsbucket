@@ -2,8 +2,7 @@ pipeline {
     agent any
 
     environment {
-        GOOGLE_CLOUD_KEYFILE_JSON = credentials('gcp-sa-key')   // Service account JSON
-        PROJECT_ID                = credentials('gcp-project-id') // Project ID string
+        PROJECT_ID = 'project-135912bf-7758-481f-965'   // Replace with your actual project ID
     }
 
     stages {
