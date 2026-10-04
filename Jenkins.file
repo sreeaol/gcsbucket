@@ -1,0 +1,55 @@
+pipeline {
+    agent any
+
+    environment {
+        GOOGLE_CLOUD_KEYFILE_JSON = credentials('gcp-sa-key')   // Service account JSON
+        PROJECT_ID                = credentials('gcp-project-id') // Project ID string
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Prepare tfvars') {
+            steps {
+                sh '''
+                cat > terraform.tfvars <<EOF
+                project_id    = "${PROJECT_ID}"
+                region        = "US"
+                bucket_name   = "jenkins-gcs-bucket-demo"
+                storage_class = "STANDARD"
+                force_destroy = true
+                EOF
+                '''
+            }
+        }
+
+        stage('Terraform Init') {
+            steps {
+                sh 'terraform init'
+            }
+        }
+
+        stage('Terraform Plan') {
+            steps {
+                sh 'terraform plan -out=tfplan'
+            }
+        }
+
+        stage('Terraform Apply') {
+            steps {
+                input message: "Apply GCS bucket changes?"
+                sh 'terraform apply -auto-approve tfplan'
+            }
+        }
+    }
+
+    post {
+        always {
+            archiveArtifacts artifacts: '**/*.tfstate', fingerprint: true
+        }
+    }
+}
