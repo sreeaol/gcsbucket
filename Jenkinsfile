@@ -18,7 +18,7 @@ pipeline {
                 cat > terraform.tfvars <<EOF
                 project_id    = "${PROJECT_ID}"
                 region        = "US"
-                bucket_name   = "jenkins-gcs-bucket-demo"
+                bucket_name   = "jenkins-gcs"
                 storage_class = "STANDARD"
                 force_destroy = true
                 EOF
