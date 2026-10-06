@@ -3,9 +3,9 @@ pipeline {
 
     environment {
         PROJECT_ID    = "project-135912bf-7758-481f-965"
-        REGION        = "US"          // adjust as needed
-        BUCKET_NAME   = "sreejith-demo-bucket" // must be globally unique
-        STORAGE_CLASS = "STANDARD"
+      region        = "us-central1"
+bucket_name   = "jenkins-gcs"
+storage_class = "STANDARD"D"
     }
 
     stages {
