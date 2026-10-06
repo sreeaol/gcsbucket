@@ -2,7 +2,10 @@ pipeline {
     agent any
 
     environment {
-        PROJECT_ID = 'project-135912bf-7758-481f-965'
+        PROJECT_ID    = "project-135912bf-7758-481f-965"
+        REGION        = "US"          // adjust as needed
+        BUCKET_NAME   = "sreejith-demo-bucket" // must be globally unique
+        STORAGE_CLASS = "STANDARD"
     }
 
     stages {
@@ -11,49 +14,37 @@ pipeline {
                 checkout scm
             }
         }
-stage('Debug tfvars') {
-    steps {
-        sh 'cat -n terraform.tfvars'
-        sh 'od -c terraform.tfvars | head -20'
-    }
-}
-        stage('Prepare tfvars') {
-            steps {
-                sh '''
-                cat > terraform.tfvars <<EOF
-                project_id    = "${PROJECT_ID}"
-                region        = "us-central1"
-                bucket_name   = "jenkins-gcs"
-                storage_class = "STANDARD"
-                force_destroy = true
-                EOF
-                '''
-            }
-        }
 
         stage('Terraform Init') {
             steps {
-                sh 'terraform init'
+                sh '''
+                    terraform init
+                '''
             }
         }
 
         stage('Terraform Plan') {
             steps {
-                sh 'terraform plan -out=tfplan'
+                sh '''
+                    terraform plan \
+                      -var="project_id=${PROJECT_ID}" \
+                      -var="region=${REGION}" \
+                      -var="bucket_name=${BUCKET_NAME}" \
+                      -var="storage_class=${STORAGE_CLASS}"
+                '''
             }
         }
 
         stage('Terraform Apply') {
             steps {
-                input message: "Apply GCS bucket changes?"
-                sh 'terraform apply -auto-approve tfplan'
+                sh '''
+                    terraform apply -auto-approve \
+                      -var="project_id=${PROJECT_ID}" \
+                      -var="region=${REGION}" \
+                      -var="bucket_name=${BUCKET_NAME}" \
+                      -var="storage_class=${STORAGE_CLASS}"
+                '''
             }
-        }
-    }
-
-    post {
-        always {
-            archiveArtifacts artifacts: '**/*.tfstate', fingerprint: true
         }
     }
 }
