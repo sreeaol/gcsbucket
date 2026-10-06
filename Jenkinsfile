@@ -22,7 +22,7 @@ stage('Debug tfvars') {
                 sh '''
                 cat > terraform.tfvars <<EOF
                 project_id    = "${PROJECT_ID}"
-                region        = "US"
+                region        = "us-central1"
                 bucket_name   = "jenkins-gcs"
                 storage_class = "STANDARD"
                 force_destroy = true
