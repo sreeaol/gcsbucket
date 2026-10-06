@@ -11,7 +11,12 @@ pipeline {
                 checkout scm
             }
         }
-
+stage('Debug tfvars') {
+    steps {
+        sh 'cat -n terraform.tfvars'
+        sh 'od -c terraform.tfvars | head -20'
+    }
+}
         stage('Prepare tfvars') {
             steps {
                 sh '''
