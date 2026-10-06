@@ -4,7 +4,7 @@ pipeline {
     environment {
         PROJECT_ID    = "project-135912bf-7758-481f-965"
         REGION        = "us-central1"
-        BUCKET_NAME   = "jenkins-gcs"
+        BUCKET_NAME   = "medha"
         STORAGE_CLASS = "STANDARD"
     }
 
