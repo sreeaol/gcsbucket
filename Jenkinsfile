@@ -1,18 +1,11 @@
 pipeline {
     agent any
+
     environment {
-        stage('Prepare tfvars') {
-    steps {
-        sh '''
-            cat > terraform.tfvars <<EOF
         PROJECT_ID    = "project-135912bf-7758-481f-965"
-        region        = "us-central1"
-        bucket_name   = "jenkins-gcs"
-        storage_class = "STANDARD"
-        EOF
-        '''
-    }
-}
+        REGION        = "us-central1"
+        BUCKET_NAME   = "jenkins-gcs"
+        STORAGE_CLASS = "STANDARD"
     }
 
     stages {
@@ -22,11 +15,22 @@ pipeline {
             }
         }
 
-        stage('Terraform Init') {
+        stage('Prepare tfvars') {
             steps {
                 sh '''
-                    terraform init
+                    cat > terraform.tfvars <<EOF
+project_id    = "${PROJECT_ID}"
+region        = "${REGION}"
+bucket_name   = "${BUCKET_NAME}"
+storage_class = "${STORAGE_CLASS}"
+EOF
                 '''
+            }
+        }
+
+        stage('Terraform Init') {
+            steps {
+                sh 'terraform init'
             }
         }
 
