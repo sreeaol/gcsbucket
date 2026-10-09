@@ -4,7 +4,7 @@ pipeline {
     parameters {
         string   (
         name  : 'BUCKET_NAME'
-        defaultvalue:''
+        defaultValue:''
         
         
     }
