@@ -1,13 +1,7 @@
 pipeline {
     agent any
 
-    environment {
-        PROJECT_ID    = "project-135912bf-7758-481f-965"
-        REGION        = "us-central1"
-        BUCKET_NAME   = "${params.BUCKET_NAME}"
-        STORAGE_CLASS = "STANDARD"
-    }
-    environment {
+    parameters {
         string   (
         name  : 'BUCKET_NAME'
         defaultvalue:''
