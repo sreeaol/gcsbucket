@@ -7,11 +7,20 @@ pipeline {
         BUCKET_NAME   = "${params.BUCKET_NAME}"
         STORAGE_CLASS = "STANDARD"
     }
+    environment {
+        string   (
+        name  : 'BUCKET_NAME'
+        defaultvalue:''
+        
+        
+    }
 
     stages {
-        stage('Checkout') {
+        stage('validate input') {
             steps {
-                checkout scm
+                script { 
+                    if(!params.bucketname?.trim() { 
+                        error ('bucketname must be provided')
             }
         }
 
