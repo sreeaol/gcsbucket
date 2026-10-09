@@ -3,8 +3,10 @@ pipeline {
 
     parameters {
         string   (
-        name  : 'BUCKET_NAME'
-        defaultValue:''
+        name  : 'BUCKET_NAME' ,
+        defaultValue: '' ,
+            description : 'enter bucket name'
+            
         
         
     }
