@@ -11,19 +11,18 @@ pipeline {
         STORAGE_CLASS = "STANDARD"
     }
 
-    stages {
-        stage('Prepare tfvars') {
-            steps {
-                sh '''
-                cat > terraform.tfvars <<EOF
-                project_id    = "${PROJECT_ID}"
-                region        = "${REGION}"
-                bucket_name   = "${BUCKET_NAME}"
-                storage_class = "${STORAGE_CLASS}"
-                EOF
-                '''
-            }
-        }
+  stage('Prepare tfvars') {
+    steps {
+        sh """
+        cat > terraform.tfvars <<'EOF'
+        project_id    = "${PROJECT_ID}"
+        region        = "${REGION}"
+        bucket_name   = "${BUCKET_NAME}"
+        storage_class = "${STORAGE_CLASS}"
+        EOF
+        """
+    }
+}
 
         stage('Terraform Init') {
             steps {
