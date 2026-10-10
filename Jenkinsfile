@@ -2,25 +2,28 @@ pipeline {
     agent any
 
     parameters {
-        string   (
-        name  : 'BUCKET_NAME' ,
-        defaultValue: '' ,
-            description : 'enter bucket name'
-            
-        )
-        
+        string(name: 'BUCKET_NAME', defaultValue: 'default-bucket-name', description: 'Name of the GCS bucket')
+    }
+
+    environment {
+        PROJECT_ID    = "project-135912bf-7758-481f-965"
+        REGION        = "us-central1"
+        STORAGE_CLASS = "STANDARD"
     }
 
     stages {
-        stage('validate input') {
+        stage('Prepare tfvars') {
             steps {
-                script { 
-                    if(!params.bucketname?.trim() { 
-                        error ('bucketname must be provided')
+                sh '''
+                cat > terraform.tfvars <<EOF
+                project_id    = "${PROJECT_ID}"
+                region        = "${REGION}"
+                bucket_name   = "${BUCKET_NAME}"
+                storage_class = "${STORAGE_CLASS}"
+                EOF
+                '''
             }
-        
-
-      
+        }
 
         stage('Terraform Init') {
             steps {
@@ -30,25 +33,13 @@ pipeline {
 
         stage('Terraform Plan') {
             steps {
-                sh '''
-                    terraform plan \
-                      -var="project_id=${PROJECT_ID}" \
-                      -var="region=${REGION}" \
-                      -var="bucket_name=${BUCKET_NAME}" \
-                      -var="storage_class=${STORAGE_CLASS}"
-                '''
+                sh 'terraform plan -var-file=terraform.tfvars'
             }
         }
 
         stage('Terraform Apply') {
             steps {
-                sh '''
-                    terraform apply -auto-approve \
-                      -var="project_id=${PROJECT_ID}" \
-                      -var="region=${REGION}" \
-                      -var="bucket_name=${BUCKET_NAME}" \
-                      -var="storage_class=${STORAGE_CLASS}"
-                '''
+                sh 'terraform apply -auto-approve -var-file=terraform.tfvars'
             }
         }
     }
