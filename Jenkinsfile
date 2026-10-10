@@ -18,7 +18,7 @@ pipeline {
                     if(!params.bucketname?.trim() { 
                         error ('bucketname must be provided')
             }
-        }
+        
 
         stage('Prepare tfvars') {
             steps {
