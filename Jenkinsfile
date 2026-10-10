@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     parameters {
-        string(name: 'BUCKET_NAME', defaultValue: 'default-bucket-name', description: 'Name of the GCS bucket')
+        string(name: 'BUCKET_NAME', defaultValue: 'default-bucket', description: 'Name of the GCS bucket')
     }
 
     environment {
@@ -11,18 +11,17 @@ pipeline {
         STORAGE_CLASS = "STANDARD"
     }
 
-  stage('Prepare tfvars') {
-    steps {
-        sh """
-        cat > terraform.tfvars <<'EOF'
-        project_id    = "${PROJECT_ID}"
-        region        = "${REGION}"
-        bucket_name   = "${BUCKET_NAME}"
-        storage_class = "${STORAGE_CLASS}"
-        EOF
-        """
-    }
-}
+    stages {
+        stage('Prepare tfvars') {
+            steps {
+                sh """
+                echo "project_id    = \\"${PROJECT_ID}\\"" > terraform.tfvars
+                echo "region        = \\"${REGION}\\"" >> terraform.tfvars
+                echo "bucket_name   = \\"${BUCKET_NAME}\\"" >> terraform.tfvars
+                echo "storage_class = \\"${STORAGE_CLASS}\\"" >> terraform.tfvars
+                """
+            }
+        }
 
         stage('Terraform Init') {
             steps {
